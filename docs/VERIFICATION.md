@@ -27,3 +27,11 @@ GitHub CI 会额外运行 Linux、macOS、Windows 源码测试；Windows 仅跳�
 修订后的[远端 CI](https://github.com/melody240/xhs-content-workbench/actions/runs/39184271862)已全部通过：Linux、macOS、Windows 与 Go MCP。对应代码提交为 2b789d85a6231a800f0df99ffcb843a6ad2c9a29。工作台测试在 Linux/macOS 为 256 项通过，Windows 为 255 项通过并明确跳过一项 POSIX mock 场景。
 
 依赖审计另见 SECURITY.md：运行依赖零告警，桌面构建链保留 8 项由同一底层问题传递的中等级告警，未为消除数字而强制变更已锁定的安装器工具链。
+
+## GSAP 动效更新（2026-10-19）
+
+使用原生模块保持布局与业务流程，添加本地 GSAP 3.15.0 时间线。此轮源码版 258 项测试通过，公开维护版 260 项测试通过（额外包含完整作者池与 CRLF 扩展回归）。新增覆盖 GSAP 错峰位置、退出/进入曲线、完成清理、连续中断及异常恢复。
+
+本机 Chromium 验证：两个主模块保持顶边对齐；6 次快速切页后无 outgoing、motion-piece 或内联位移残留；图片选中反馈结束清理；弹窗 filter 为 none；系统减少动态效果和键盘切换可用；GSAP 加载失败时原生回退仍可进入编辑页。截图及测试使用临时账号和合成素材，未登录平台或对外发布。Windows 客户交付包未更新，真实设备帧率不能由此测试代替。
+
+窄屏已按真实 390px 视口验证，无横向溢出；动态选择反馈以动画完成事件核查清理，而非依赖固定等待。GSAP 初始化到一半异常的路径也有独立回归，确保已分配的 context 仍能恢复内容。

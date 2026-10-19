@@ -80,7 +80,7 @@ function glidePlate(root, element, previous) {
   const animation = plate.animate([
     {transform:`translate(${dx}px,${dy}px) scale(${previous.width / next.width},${previous.height / next.height})`,opacity:.8},
     {transform:'translate(0,0) scale(1,1)',opacity:1},
-  ], {duration:380,easing:ease});
+  ], {duration:280,easing:ease});
   track(root,[animation],()=>{plate.remove();element.classList.remove('motion-gliding');});
 }
 
@@ -109,12 +109,12 @@ function unfoldTitle(root, element, {result=false}={}) {
     element.setAttribute('aria-label',text);
     element.classList.add('motion-split');
     element.replaceChildren(fragment);
-    const step=Math.min(result?20:38,180/Math.max(1,chars.length-1));
+    const step=Math.min(result?14:22,100/Math.max(1,chars.length-1));
     chars.forEach((char,index)=>animations.push(char.animate([
       {transform:'translateY(.82em) rotate(5deg)',opacity:.15},
       {transform:'translateY(-.035em) rotate(0deg)',opacity:1,offset:.8},
       {transform:'translateY(0) rotate(0deg)',opacity:1},
-    ],{duration:result?420:560,delay:index*step,easing:ease,fill:'backwards'})));
+    ],{duration:result?300:380,delay:index*step,easing:ease,fill:'backwards'})));
     track(root,animations,restore);
   } catch {
     animations.forEach(animation=>animation.cancel());restore();
@@ -152,7 +152,7 @@ function installFeedback(root) {
     track(root,[pulse.animate([
       {transform:'scale(.6)',opacity:.38},
       {transform:'scale(1.45)',opacity:0},
-    ],{duration:360,easing:ease})],()=>pulse.remove());
+    ],{duration:240,easing:ease})],()=>pulse.remove());
   },{passive:true});
   root.addEventListener('change',event=>{
     const input=event.target;
@@ -165,9 +165,9 @@ function installFeedback(root) {
       {transform:'translateX(-110%) skewX(-18deg)',opacity:0},
       {transform:'translateX(0) skewX(-18deg)',opacity:.7,offset:.45},
       {transform:'translateX(110%) skewX(-18deg)',opacity:0},
-    ],{duration:580,easing:ease})],()=>wave.remove());
+    ],{duration:360,easing:ease})],()=>wave.remove());
     const mark=picture.querySelector('.material-selection-mark');
-    if(mark)track(root,[mark.animate([{transform:'scale(.55)',opacity:.3},{transform:'scale(1.12)',opacity:1,offset:.7},{transform:'scale(1)',opacity:1}],{duration:340,easing:ease})]);
+    if(mark)track(root,[mark.animate([{transform:'scale(.55)',opacity:.3},{transform:'scale(1.06)',opacity:1,offset:.7},{transform:'scale(1)',opacity:1}],{duration:220,easing:ease})]);
   });
 }
 

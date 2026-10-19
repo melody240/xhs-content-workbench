@@ -4,3 +4,4 @@
 *.jpeg binary
 *.webp binary
 workbench/vendor/** -whitespace
+workbench/public/vendor/** -whitespace

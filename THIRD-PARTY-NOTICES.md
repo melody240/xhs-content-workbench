@@ -6,6 +6,7 @@
 | --- | --- | --- | --- |
 | Xiaohongshu MCP | https://github.com/xpzouying/xiaohongshu-mcp | Apache-2.0 | mcp/LICENSE；保留 module 路径及原版权声明 |
 | Xiaohongshu Skills | https://github.com/autoclaw-cc/xiaohongshu-skills | MIT | workbench/vendor/xiaohongshu-skills/LICENSE |
+| GSAP 3.15.0 | https://gsap.com | GSAP Standard no-charge license（不是 MIT / Apache-2.0） | workbench/public/vendor/gsap/NOTICE.txt；保留分发文件原声明 |
 | ws 8.22.0 | https://github.com/websockets/ws | MIT | 安装时由 npm 获取，许可证随包 |
 | pngjs 7.0.0 | https://github.com/pngjs/pngjs | MIT | 安装时由 npm 获取，许可证随包 |
 | Electron / electron-builder | https://www.electronjs.org / https://github.com/electron-userland/electron-builder | MIT，含各自第三方组件声明 | 构建时下载，保留运行时自带 notices |

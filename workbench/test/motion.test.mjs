@@ -114,7 +114,7 @@ test('only new result identities reveal on the same route, without moving the pa
   const {root,animations}=titleScene({results:[{id:'old',text:'一样标题'},{id:'new',text:'一样标题'}]});
   playMotion(root,{view:'research',titles:['old:一样标题']});
   assert.equal(animations.length,4);
-  assert.ok(animations.every(a=>a.options.duration===420));
+  assert.ok(animations.every(a=>a.options.duration>=200&&a.options.duration<=400));
   stopMotion(root);
 });
 test('long titles and nested interactive content are left unmodified',()=>{

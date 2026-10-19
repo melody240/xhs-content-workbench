@@ -1,0 +1,5 @@
+GSAP 3.15.0
+Copyright 2026, GreenSock. All rights reserved.
+Source: https://www.npmjs.com/package/gsap/v/3.15.0
+License: GSAP Standard no-charge license, https://gsap.com/standard-license
+This library retains its original license and is not covered by the project Apache-2.0 license.

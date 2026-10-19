@@ -43,3 +43,33 @@ test('sibling modules have different starts and duration with a bounded settling
  assert.ok(right.delay>left.delay+70);assert.ok(right.duration>left.duration);assert.ok(third.delay<right.delay);
  assert.ok(Math.max(...[left,right,third].map(t=>t.delay+t.duration))<850);
 });
+
+
+function gsapScene(){
+ const sceneValue=scene(),calls=[];let options,reverted=0,killed=0;
+ const timeline={fromTo(target,from,to,position){calls.push({target,from,to,position});return this;},play(){this.played=true;return this;},kill(){killed++;}};
+ window.gsap={context(fn){fn();return {add(fn){fn();},revert(){reverted++;}};},timeline(config){options=config;return timeline;}};
+ return {...sceneValue,calls,timeline,complete:()=>options.onComplete(),cleaned:()=>({reverted,killed})};
+}
+test('GSAP uses one paused timeline with independent module positions and a faster exit',()=>{
+ const s=gsapScene();transitionWorkspace(s.root,s.snapshot);
+ assert.equal(s.timeline.played,true);assert.equal(s.animations.length,0);
+ const exit=s.calls.find(c=>c.target===s.outgoing),entry=s.calls.find(c=>c.target===s.panel);
+ assert.equal(exit.to.x,-864);assert.equal(entry.from.x,864);assert.equal(entry.to.x,0);
+ assert.equal(exit.to.ease,'power2.in');assert.equal(entry.to.ease,'power3.out');assert.ok(exit.to.duration<entry.to.duration);assert.ok(entry.position>exit.position);
+ s.complete();assert.equal(s.outgoing.removed,true);assert.equal(s.stage.style.minHeight,'');assert.deepEqual(s.cleaned(),{reverted:1,killed:1});
+});
+test('interrupting GSAP reverts styles once and leaves no outgoing or animated layer',()=>{
+ const s=gsapScene();transitionWorkspace(s.root,s.snapshot);stopWorkspaceTransition(s.root);stopWorkspaceTransition(s.root);s.complete();
+ assert.deepEqual(s.cleaned(),{reverted:1,killed:1});assert.equal(s.outgoing.removed,true);assert.equal(s.classes.size,0);assert.equal(s.stage.style.minHeight,'');
+});
+test('a failed GSAP setup restores the readable page and discards its snapshot',()=>{
+ const s=gsapScene();window.gsap.timeline=()=>{throw Error('synthetic timeline failure');};
+ assert.doesNotThrow(()=>transitionWorkspace(s.root,s.snapshot));assert.equal(s.outgoing.removed,true);assert.equal(s.stage.style.minHeight,'');assert.equal(s.classes.size,0);
+});
+
+test('a partially built GSAP timeline is still owned by its context and fully reverted',()=>{
+ const s=gsapScene(),append=s.timeline.fromTo.bind(s.timeline);let count=0;
+ s.timeline.fromTo=(...args)=>{if(++count===2)throw Error('synthetic partial setup');return append(...args);};
+ assert.doesNotThrow(()=>transitionWorkspace(s.root,s.snapshot));assert.deepEqual(s.cleaned(),{reverted:1,killed:1});assert.equal(s.outgoing.removed,true);assert.equal(s.classes.size,0);
+});
