@@ -1,0 +1,15 @@
+{
+  "source": "https://github.com/autoclaw-cc/xiaohongshu-skills",
+  "downloadRef": "main",
+  "installedAt": "2026-10-08T12:24:44.110Z",
+  "method": "skill-installer download",
+  "files": {
+    "README.md": "9f256e784a2ba6a25900790767168844068a25e82d18e8b5c6ceb8d1e91a6eb9",
+    "SKILL.md": "e01604d830c13d92c568a8a6237d7071e04bc49cfe2217a8a466203789ab6a99",
+    "LICENSE": "979af26e60757892fce44399beb2fa9ea58c65cae03b78d2f1d579f89e731cfb",
+    "scripts/cli.py": "a15a43282c61685edb945cb6a67444e265f2ec878909ebae4f9cb9129142d037",
+    "extension/background.js": "f211baa1638b87e79b58249d645ceaa3ea966ac59ca730aab1ec51e077963f88"
+  },
+  "upstreamModified": false,
+  "adapter": "../../integrations/"
+}

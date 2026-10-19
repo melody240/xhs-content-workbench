@@ -1,0 +1,12 @@
+XHS Content Workbench · 小红书内容工作台
+Maintained by melody240.
+
+This distribution contains modified source from Xiaohongshu MCP:
+https://github.com/xpzouying/xiaohongshu-mcp
+Licensed under Apache License 2.0. Existing source notices are retained.
+
+This distribution also contains Xiaohongshu Skills:
+https://github.com/autoclaw-cc/xiaohongshu-skills
+Licensed under MIT. See workbench/vendor/xiaohongshu-skills/LICENSE.
+
+Third-party media retain their original rights. See docs/ASSETS.md.

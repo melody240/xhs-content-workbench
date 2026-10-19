@@ -1,0 +1,4 @@
+# Locked local adapter runtime; upstream pyproject.toml declares these dependencies.
+requests==2.32.5
+websockets==15.0.1
+python-socks==2.8.1

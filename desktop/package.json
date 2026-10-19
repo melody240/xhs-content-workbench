@@ -1,0 +1,104 @@
+{
+  "devDependencies": {
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3"
+  },
+  "name": "xhs-workbench-desktop",
+  "version": "1.13.1",
+  "private": true,
+  "description": "小红书内容工作台 Windows 桌面版",
+  "author": "melody240",
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "build:win": "electron-builder --win nsis --x64 --publish never",
+    "prepare:resources": "node ../scripts/desktop-prepare.mjs"
+  },
+  "build": {
+    "appId": "local.xhs.workbench.desktop",
+    "productName": "小红书工作台",
+    "copyright": "XHS Workbench; third-party components retain their original notices",
+    "asar": true,
+    "files": [
+      "desktop/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/workbench",
+        "to": "workbench",
+        "filter": [
+          "**/*",
+          "!test/**"
+        ]
+      },
+      {
+        "from": "resources/python",
+        "to": "python"
+      },
+      {
+        "from": "resources/runtime-check.py",
+        "to": "runtime-check.py"
+      },
+      {
+        "from": "resources/guide",
+        "to": "guide"
+      },
+      {
+        "from": "resources/LICENSE-xiaohongshu-mcp",
+        "to": "LICENSE-xiaohongshu-mcp"
+      },
+      {
+        "from": "resources/THIRD-PARTY-NOTICES.txt",
+        "to": "THIRD-PARTY-NOTICES.txt"
+      },
+      {
+        "from": "resources/workbench/node_modules/ws",
+        "to": "workbench/node_modules/ws",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "resources/workbench/node_modules/pngjs",
+        "to": "workbench/node_modules/pngjs",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "directories": {
+      "output": "output"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "executableName": "XHSWorkbench",
+      "signAndEditExecutable": false,
+      "artifactName": "XHS-Workbench-Setup-${version}-win-x64.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "小红书工作台",
+      "deleteAppDataOnUninstall": false,
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ],
+      "language": "2052",
+      "runAfterFinish": true
+    },
+    "npmRebuild": false
+  },
+  "license": "Apache-2.0"
+}

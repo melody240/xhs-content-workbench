@@ -1,0 +1,18 @@
+{
+  "name": "xhs-content-workbench",
+  "version": "1.13.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "小红书内容工作台 · 选题、写作、评论素材与发布",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "start": "npm --prefix workbench start",
+    "check": "npm --prefix workbench run check",
+    "test": "npm --prefix workbench test",
+    "audit:public": "node scripts/audit-public.mjs",
+    "desktop:prepare": "node scripts/desktop-prepare.mjs"
+  }
+}

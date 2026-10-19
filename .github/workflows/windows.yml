@@ -1,0 +1,29 @@
+name: Build Windows installer
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm run setup
+      - run: npm run check
+      - run: npm test
+      - run: npm ci --prefix desktop
+      - run: npm run desktop:prepare
+      - run: python desktop/tools/fetch-python.py
+      - run: npm --prefix desktop run build:win
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xhs-content-workbench-windows-x64
+          path: desktop/output/*Setup*.exe
+          if-no-files-found: error
+          retention-days: 14

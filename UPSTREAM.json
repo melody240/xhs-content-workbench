@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "project": "xhs-content-workbench",
+  "codeLicense": "Apache-2.0",
+  "mcp": {
+    "source": "https://github.com/xpzouying/xiaohongshu-mcp",
+    "baselineCommit": "a5c8f7799980ba1fdd501999843eb2d17e4c9a9f",
+    "modified": true,
+    "path": "mcp",
+    "license": "Apache-2.0"
+  },
+  "skills": {
+    "source": "https://github.com/autoclaw-cc/xiaohongshu-skills",
+    "snapshotRef": "main",
+    "commit": null,
+    "provenance": "workbench/vendor/xiaohongshu-skills/WORKBENCH-PROVENANCE.json",
+    "license": "MIT"
+  },
+  "media": {
+    "authorCount": 359,
+    "authorManifest": "workbench/integrations/quote-author-seed/authors.json",
+    "includedByMaintainerInstruction": true,
+    "license": "Original rights retained; see docs/ASSETS.md"
+  }
+}

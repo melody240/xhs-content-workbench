@@ -1,0 +1,19 @@
+{
+  "name": "xiaohongshu-workbench",
+  "version": "1.13.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "check": "node --check integrations/browser-readiness.js && node --check integrations/browser-publish.js && node --check integrations/browser-tools.mjs && node --check publishing.mjs && node --check accounts.mjs && node --check server.mjs && node --check public/app.js && node --check public/image-order.js && node --check public/disclosures.js && node --check public/motion.js && node --check public/progress-ui.js && node --check public/workspace-shell.js && node --check public/fleet-ui.js && node --check public/management-ui.js && node --check core.mjs && node --check public/skills-ui.js && node --check integrations/skills.mjs && node --check integrations/skills-extension-header.js && node --check integrations/model.mjs && node --check integrations/agent.mjs && node --check integrations/diandian.mjs && node --check public/agent-ui.js && node --check public/writing-options.js && node --check integrations/writer.mjs && node --check integrations/content-workflow.mjs && node --check integrations/content-guidance.mjs && node --check public/comments-ui.js && node --check public/audience-options.js && node --check integrations/comment-audience.mjs && node --check integrations/comment-collection.mjs && node --check integrations/douyin-comments-extension.js && node --check integrations/comment-screenshots.mjs && node --check integrations/comment-capture-extension.js && node --check integrations/material-filter.mjs && node --check integrations/material-library.mjs && node --check integrations/post-comments.mjs && node --check integrations/source-capture-extension.js && node --check public/materials-ui.js && node --check public/cover.js && node --check public/material-query.js && node --check integrations/material-assets.mjs && node --check public/collage-ui.js && node --check public/collage-layout.js && node --check public/monitor-ui.js && node --check public/metric-ui.js && node --check integrations/creator-metrics.mjs && node --check integrations/creator-metrics-extension.js && node --check public/workspace-transition.js && node --check public/dropdowns.js && node --check public/publish-ui.js && node --check integrations/quote-cards.mjs && node --check public/quote-card-layout.js && node --check public/quote-card-ui.js && node --check storage.mjs && node --check retention.mjs && node --check rotating-log.mjs && node --check public/polling.js && node --check launch.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "pngjs": "7.0.0",
+    "ws": "8.22.0"
+  },
+  "license": "Apache-2.0"
+}

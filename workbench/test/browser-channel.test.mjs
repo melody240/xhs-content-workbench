@@ -1,0 +1,56 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import http from 'node:http';
+import {once} from 'node:events';
+import {spawn} from 'node:child_process';
+import {WebSocket} from 'ws';
+import {AccountStore} from '../accounts.mjs';
+import {shanghaiDay,submissionKey} from '../core.mjs';
+import {browserCommand} from '../integrations/browser-tools.mjs';
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+test('Workbench MCP-shaped tools use Edge only, unknown publication remains unchanged, no background MCP starts',async t=>{
+ const data=await fs.mkdtemp(path.join(os.tmpdir(),'edge-channel-test-'));let mcpCalls=0;
+ const fake=http.createServer((req,res)=>{mcpCalls++;res.end('{}');});fake.listen(0,'127.0.0.1');await once(fake,'listening');
+ const store=await AccountStore.open(data,`http://127.0.0.1:${fake.address().port}/mcp`),a=store.items[0];
+ a.identity={userId:'userA',redId:'redA'};
+ a.state.settings.operationChannel='mcp';a.state.settings.monitorSource='mcp';
+ const b=await store.add('曾使用独立 MCP 的另一账号');
+ b.state.settings.operationChannel='mcp';b.state.settings.monitorSource='mcp';
+ const file=path.join(data,'photo.png');await fs.writeFile(file,'fixture');a.state.assets.photo={path:file};
+ const args={title:'结果不确定的提交',content:'测试正文',images:[file]},key=submissionKey('publish_content',args);
+ a.state.submissions[key]={date:shanghaiDay(new Date()),status:'uncertain',title:args.title,channel:'mcp'};await store.save();
+ const probe=http.createServer();probe.listen(0,'127.0.0.1');await once(probe,'listening');const port=probe.address().port;await new Promise(r=>probe.close(r));
+ const child=spawn(process.execPath,['server.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,WORKBENCH_ALLOW_LEGACY_MCP:'0',WORKBENCH_DATA_DIR:data,WORKBENCH_PORT:String(port),WORKBENCH_MCP_BINARY:path.join(data,'does-not-exist')},stdio:'ignore'});
+ let ext;t.after(async()=>{ext?.terminate();const ended=once(child,'exit');child.kill('SIGTERM');await ended;await new Promise(r=>fake.close(r));await fs.rm(data,{recursive:true,force:true});});
+ const base=`http://127.0.0.1:${port}`;
+ for(let i=0;i<100;i++){try{if((await fetch(base+'/api/health')).ok)break;}catch{}await delay(50);}
+ const request=(route,body)=>fetch(base+route,{method:body?'POST':'GET',headers:{'Content-Type':'application/json','X-Workbench-Request':'1','X-Workbench-Account':a.id},...(body?{body:JSON.stringify(body)}:{})});
+ let state=await(await request('/api/status')).json();assert.equal(state.operationChannel,'edge');assert.equal(state.legacyMcpEnabled,false);assert.equal(mcpCalls,0);
+ assert.equal((await request('/api/channel',{channel:'mcp'})).status,409);
+ const other=await(await fetch(base+'/api/status',{headers:{'X-Workbench-Account':b.id}})).json();assert.equal(other.operationChannel,'edge');assert.equal(mcpCalls,0);
+ const persisted=JSON.parse(await fs.readFile(path.join(data,'state.json'),'utf8'));assert.ok(persisted.accounts.every(x=>x.state.settings.operationChannel==='edge'));
+ assert.equal((await request('/api/connection',{endpoint:`http://127.0.0.1:${fake.address().port}/mcp`})).status,409);
+ const token=(await fs.readFile(path.join(data,'skills-bridge-token'),'utf8')).trim();
+ ext=new WebSocket(`ws://127.0.0.1:${port}/skills-bridge`,{origin:'chrome-extension://'+'a'.repeat(32)});await once(ext,'open');const methods=[];
+ let currentIdentity={userId:'userA',redId:'redA',nickname:'模拟A'};
+ ext.on('message',raw=>{const m=JSON.parse(raw);methods.push(m.method);ext.send(JSON.stringify({id:m.id,result:m.method==='wb_identity'?currentIdentity:{status:'ready',message:'模拟页面已就绪'}}));});
+ ext.send(JSON.stringify({role:'extension',token,capabilities:['task-readiness-v1']}));await delay(40);
+ let r=await request('/api/call',{name:'check_login_status',args:{}});assert.equal(r.status,200);assert.equal((await r.json()).channel,'edge');assert.deepEqual(methods,['wb_identity']);
+ r=await request('/api/call',{name:'publish_content',args,confirmed:true});assert.equal(r.status,409);
+ state=await(await request('/api/status')).json();assert.equal(state.submissions[key].status,'uncertain');assert.equal(methods.length,1);
+ r=await request('/api/call',{name:'get_unread_count',args:{}});assert.equal(r.status,400);assert.equal(mcpCalls,0);
+ r=await request('/api/monitor/settings',{source:'mcp'});assert.equal(r.status,409);
+ currentIdentity={userId:'userA'};r=await request('/api/call',{name:'check_login_status',args:{}});assert.equal(r.status,200);
+ state=await(await request('/api/status')).json();assert.equal(state.login.name,'模拟A');assert.equal(state.login.profile.redId,'redA');assert.equal(state.login.profile.nickname,'模拟A');
+ ext.close();await once(ext,'close');
+ for(let i=0;i<30;i++){if(!(await(await request('/api/status')).json()).browser.connected)break;await delay(10);}
+ r=await request('/api/call',{name:'check_login_status',args:{}});assert.equal(r.status,409);assert.equal(mcpCalls,0);
+});
+test('Edge tool mapping retains reference IDs and filters, rejects unadapted tools',()=>{
+ assert.deepEqual(browserCommand('search_feeds',{keyword:'主题',filters:{sort_by:'最新'}}),{command:'search-feeds',input:{keyword:'主题',sortBy:'最新'}});
+ assert.deepEqual(browserCommand('reply_comment_in_feed',{feed_id:'n',xsec_token:'t',comment_id:'c',content:'正文'}),{command:'reply-comment',input:{feedId:'n',xsecToken:'t',commentId:'c',content:'正文'}});
+ assert.throws(()=>browserCommand('get_cookies',{}),/没有 Edge 适配/);
+});
