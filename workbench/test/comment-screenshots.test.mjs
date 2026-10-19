@@ -19,7 +19,7 @@ const target={job:{id:'j'},source:{id:'S1',feedId:'note',xsecToken:'token',title
 async function setup(t){const data=await fs.mkdtemp(path.join(os.tmpdir(),'comments-test-'));t.after(()=>fs.rm(data,{recursive:true,force:true}));await fs.mkdir(path.join(data,'uploads'));return {data,a:{id:'a',state:{assets:{},drafts:[]}}};}
 test('Screenshots retain exact raw bytes, source evidence and scoped assets; review is required; draft append is idempotent and preserves text',async t=>{
  const {data,a}=await setup(t);const r=await saveCapture(data,a,target,{data:bytes.toString('base64'),originalData:bytes.toString('base64'),capturedAt:'2026-10-01',content:'模拟评论',likes:'8',author:'模拟作者',clip:{x:0,y:0,width:1,height:1},viewport:{width:1,height:1}});
- assert.deepEqual(await fs.readFile(r.asset.path),bytes);assert.deepEqual(await fs.readFile(r.originalAsset.path),bytes);assert.equal(r.asset.width,1);assert.equal(r.recordedLikes,'7');assert.equal(r.observedLikes,'8');assert.ok(r.asset.sha256);assert.equal((await fs.stat(r.asset.path)).mode&0o777,0o600);
+ assert.deepEqual(await fs.readFile(r.asset.path),bytes);assert.deepEqual(await fs.readFile(r.originalAsset.path),bytes);assert.equal(r.asset.width,1);assert.equal(r.recordedLikes,'7');assert.equal(r.observedLikes,'8');assert.ok(r.asset.sha256);if(process.platform!=='win32')assert.equal((await fs.stat(r.asset.path)).mode&0o777,0o600);
  assert.throws(()=>addToDraft(a,{captureIds:[r.id]}),/确认评论完整/);assert.throws(()=>recordFor({id:'b',state:{}},r.id),/不属于/);
  await reviewCapture(data,a,r.id);a.state.drafts.push({id:'d',mode:'image',title:'用户标题',content:'用户正文',assets:[{id:'cover'}],updatedAt:'old'});
  assert.throws(()=>addToDraft(a,{captureIds:[r.id],draftId:'d',updatedAt:'stale'}),/修改/);

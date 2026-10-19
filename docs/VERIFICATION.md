@@ -6,7 +6,7 @@
 | --- | --- |
 | 从独立公开目录执行 npm run setup | 通过：新建 Python 3.12 虚拟环境，安装 Node 与 Python 依赖 |
 | npm run check | 通过 |
-| npm test | 255 / 255 通过（本机 macOS） |
+| npm test | 256 / 256 通过（本机 macOS） |
 | 可选 MCP：go test ./... | 所有有测试的 Go 包通过；无测试的包正常编译 |
 | 359 组作者素材 | 359 唯一 handle、359 图片、无缺失、逐文件 SHA-256 检查通过，合计 1,398,966 字节 |
 | 旧作者池升级 | 保留自定义名称及 hidden 状态，补齐 359 组，不重复导入 |
@@ -21,3 +21,5 @@
 GitHub CI 会额外运行 Linux、macOS、Windows 源码测试；Windows 仅跳过依赖 POSIX 可执行脚本的一个 MCP mock 集成场景，该场景由 Linux/macOS 覆盖。CI 状态以仓库 Actions 最新记录为准，本文不预先宣称远端已通过。
 
 本次没有重建客户 Windows 安装包，没有进行 Windows 实机安装/升级、真实平台采集、最终发布、定时或评论的验收。手动 Windows 构建工作流属于后续可执行的入口，不等于已完成这些验收。
+
+首次远端 CI 已通过 Linux/macOS 与 MCP；Windows 检出 CRLF 导致 Cookie 辅助函数移除失败及两项 POSIX 权限断言不适用的问题。已在扩展生成入口统一换行符，补充 CRLF 回归，并将 POSIX 权限断言限于适用系统；Windows 文件权限由本机 ACL 决定。修订后的远端结果以 Actions 为准。

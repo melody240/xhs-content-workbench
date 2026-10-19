@@ -214,3 +214,17 @@ test('local image previews may obtain titles but never weaken final publishing a
  const result=await s.smartTitles(a,draft);assert.equal(s.form.assetsVerified,false);
  await assert.rejects(s.execute(a,{command:'fill-publish',confirmed:true,composer:{...draft,title:result.title}}),/尚未完成上传/);assert.equal(fills,2);assert.equal(s.form.phase,'uncertain');
 });
+
+
+test('CRLF vendor input still removes Cookie helper and generates the same constrained extension',async t=>{
+ const {buildExtension}=await import('../integrations/skills-extension.mjs');
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'xhs-crlf-extension-'));t.after(()=>fs.rm(dir,{recursive:true,force:true}));
+ const vendor=path.join(dir,'vendor'),directory=path.join(dir,'generated');await fs.mkdir(path.join(vendor,'extension'),{recursive:true});
+ const upstream=await fs.readFile(path.join(root,'vendor/xiaohongshu-skills/extension/background.js'),'utf8');
+ await fs.writeFile(path.join(vendor,'extension/background.js'),upstream.replace(/\r\n?/g,'\n').replaceAll('\n','\r\n'));
+ await fs.copyFile(path.join(root,'vendor/xiaohongshu-skills/LICENSE'),path.join(vendor,'LICENSE'));
+ await buildExtension({vendor,directory,port:18180,token:'synthetic-test-token'});
+ const generated=await fs.readFile(path.join(directory,'background.js'),'utf8');
+ assert.doesNotMatch(generated,/document\.cookie|chrome\.cookies|netlog/i);
+ assert.match(generated,/function domExecutor/);
+});

@@ -5,7 +5,7 @@ import path from 'node:path';
 // Cookie capture, network logger, risk probes, or browser fingerprint overrides.
 export async function buildExtension({vendor, directory, port, token}) {
   await fs.mkdir(directory, {recursive:true, mode:0o700});
-  const original=await fs.readFile(path.join(vendor,'extension/background.js'),'utf8');
+  const original=(await fs.readFile(path.join(vendor,'extension/background.js'),'utf8')).replace(/\r\n?/g,'\n');
   let helpers=original.slice(original.indexOf('async function cmdWaitForLoad('),original.indexOf('// ─── 302→/404'));
   if(!helpers.includes('function domExecutor'))throw new Error('上游扩展结构改变，请先复核适配器。');
   helpers=helpers.replace(/async function cmdGetCookies\([\s\S]*?\n}\n/,'');
