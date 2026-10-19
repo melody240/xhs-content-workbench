@@ -23,3 +23,7 @@ GitHub CI 会额外运行 Linux、macOS、Windows 源码测试；Windows 仅跳�
 本次没有重建客户 Windows 安装包，没有进行 Windows 实机安装/升级、真实平台采集、最终发布、定时或评论的验收。手动 Windows 构建工作流属于后续可执行的入口，不等于已完成这些验收。
 
 首次远端 CI 已通过 Linux/macOS 与 MCP；Windows 检出 CRLF 导致 Cookie 辅助函数移除失败及两项 POSIX 权限断言不适用的问题。已在扩展生成入口统一换行符，补充 CRLF 回归，并将 POSIX 权限断言限于适用系统；Windows 文件权限由本机 ACL 决定。修订后的远端结果以 Actions 为准。
+
+修订后的[远端 CI](https://github.com/melody240/xhs-content-workbench/actions/runs/39184271862)已全部通过：Linux、macOS、Windows 与 Go MCP。对应代码提交为 2b789d85a6231a800f0df99ffcb843a6ad2c9a29。工作台测试在 Linux/macOS 为 256 项通过，Windows 为 255 项通过并明确跳过一项 POSIX mock 场景。
+
+依赖审计另见 SECURITY.md：运行依赖零告警，桌面构建链保留 8 项由同一底层问题传递的中等级告警，未为消除数字而强制变更已锁定的安装器工具链。
